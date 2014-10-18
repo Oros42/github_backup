@@ -13,7 +13,7 @@ crontab -e
 
 And put  
 ```
-42 */6 * * * <path_to_github_backup>/github_backup.sh
+*/6 * * * <path_to_github_backup>/github_backup.sh
 ```
 
 Example :
