@@ -10,6 +10,7 @@ backup_repositories="./repositories/"
 
 function find_and_clone_repo()
 {
+	pwd
 	if [[ ! -f $log_file ]]; then
 		echo "" > $log_file
 	fi
@@ -42,9 +43,8 @@ if [[ ! -d "dmca" ]]; then
 	git clone https://github.com/github/dmca.git
 	find_and_clone_repo
 else
-	cd dmca
-	a=`git pull`
-	if [[ "$a" != "Already up-to-date." ]]; then
+	a=`cd dmca && git pull`
+	if [[ "$a" != "Already up-to-date. " ]]; then
 		echo "New DMCA"
 		find_and_clone_repo
 	else
