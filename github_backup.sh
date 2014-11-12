@@ -5,7 +5,7 @@
 # Clone github's repositories before takedown by DMCA
 #
 log_file="repo_list.txt"
-limite_date=`date +"%Y%m%d" -d "2 days ago"`
+limite_date=`date +"%Y%m%d" -d "3 days ago"`
 backup_repositories="./repositories/"
 
 function find_and_clone_repo()
@@ -22,16 +22,18 @@ function find_and_clone_repo()
 			do 
 				if [[ `grep "https://$repo.git" $log_file` == "" ]]; then
 					echo "$file -> https://$repo.git"
-					p=`wget -q https://$repo.git -O - | grep "Repository unavailable due to DMCA takedown."`
-					echo "$p"
-					if [[ "$p" == "" ]]; then
-						user=`echo $repo | grep -Eo "github.com\/[a-zA-Z0-9\_\-]*\/"`
-						user=${user:11:-1}
-						mkdir -p $backup_repositories$user
-						cd $backup_repositories$user
-						git clone https://$repo.git
-						cd ../..
-						echo "$file -> https://$repo.git" >> $log_file
+					p=`wget -q https://$repo.git -O -`
+					if [[ "$p" != "" ]]; then
+						p=`echo "$p" |  grep "Repository unavailable due to DMCA takedown."`
+						if [[ "$p" == "" ]]; then
+							user=`echo $repo | grep -Eo "github.com\/[a-zA-Z0-9\_\-]*\/"`
+							user=${user:11:-1}
+							mkdir -p $backup_repositories$user
+							cd $backup_repositories$user
+							git clone https://$repo.git
+							cd ../..
+							echo "$file -> https://$repo.git" >> $log_file
+						fi
 					fi
 				fi
 			done
