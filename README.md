@@ -4,7 +4,7 @@ github_backup
 Clone github's repositories found on https://github.com/github/dmca before takedown by DMCA.
 
 
-Who to use ?
+How to use ?
 ============
 
 ```
