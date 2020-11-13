@@ -1,23 +1,27 @@
 #!/bin/bash
 # author Oros
-# version 20141018
+# version 20201113
 #
 # Clone github's repositories before takedown by DMCA
 #
-log_file="repo_list.txt"
-limite_date=`date +"%Y%m%d" -d "3 days ago"`
-backup_repositories="./repositories/"
 
+log_file="$(pwd)/repo_list.txt"
+limite_date=`date +"%Y%m%d" -d "3 days ago"`
+backup_repositories="$(pwd)/repositories/"
+dmca_dir="$(pwd)/dmca"
 function find_and_clone_repo()
 {
 	pwd
 	if [[ ! -f $log_file ]]; then
 		echo "" > $log_file
 	fi
-	for file in dmca/20*.md
+    cd $dmca_dir
+	for file in $(find -name "*.md")
 	do
 		# No need to clone old repositories who are allready unavailable
-		if [[ "$limite_date" -lt `date +"%Y%m%d" -d ${file:5:10}` ]]; then
+        cd $dmca_dir
+        file_name=$(basename $file)
+		if [[ "${file:0:4}" == "./20" && "$limite_date" -lt `date +"%Y%m%d" -d ${file_name:0:10}` ]]; then
 			for repo in `sed "s#github\.com#\ngithub\.com#g" $file |grep -Eo "(github.com\/[a-zA-Z0-9\_\-]*\/[a-zA-Z0-9\_\.\-]*[a-zA-Z0-9\_\-])"`
 			do 
 				if [[ `grep "https://$repo.git" $log_file` == "" ]]; then
@@ -31,7 +35,6 @@ function find_and_clone_repo()
 							mkdir -p $backup_repositories$user
 							cd $backup_repositories$user
 							git clone https://$repo.git
-							cd ../..
 							echo "$file -> https://$repo.git" >> $log_file
 						fi
 					fi
